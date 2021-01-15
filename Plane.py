@@ -46,7 +46,7 @@ class Plane:
         :param choice: 0 -> UP, 1 -> NOP
         :return: None
         """
-        action = "UP" if not choice else 1
+        action = "UP" if not choice else "NOP"
 
         self.move(action)
 

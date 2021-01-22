@@ -1,4 +1,5 @@
 import numpy as np
+import Plane
 
 
 class Env:
@@ -17,6 +18,8 @@ class Env:
 
         self.width = width
 
+        self.reset()
+
     def reset(self):
         """
         Remet l'env à 0 et renvoie l'observ de l'état init
@@ -25,6 +28,6 @@ class Env:
 
         self.distance = 0
 
-        self.plane = None
+        self.plane = Plane.Plane(self)
 
         self.birds = []

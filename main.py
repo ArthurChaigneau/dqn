@@ -2,8 +2,8 @@ import Plane
 import Env
 import GameView
 
-e = Env.Env(1200, 800)
+e = Env.Env(800, 1200)
 
-g = GameView.GameView(1200, 800, e)
+g = GameView.GameView(800, 1200, e)
 
 g.run()

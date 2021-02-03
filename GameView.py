@@ -2,6 +2,7 @@ import pygame
 import Env
 import PlaneView
 import CloudsView
+import GroupOfBirdsView
 
 
 class GameView:
@@ -11,7 +12,7 @@ class GameView:
 
     BACKGROUND_COLOR = '#0080FF'
 
-    def __init__(self, width: int, height: int, env: Env.Env):
+    def __init__(self, height: int, width: int, env: Env.Env):
         """
         Init de la classe
         :param width: Largeur
@@ -42,6 +43,9 @@ class GameView:
         # Graphismes des nuages
         self.cloudsview = CloudsView.CloudsView(self.height, self.width, self.window)
 
+        # Graphismes des oiseaux
+        self.groups_birds_view = [GroupOfBirdsView.GroupOfBirdsView(self.window, g) for g in self.env.list_group_birds]
+
         # Background de la fenêtre
         self.background = pygame.Surface((self.width, self.height))
         self.background.fill(pygame.Color(self.BACKGROUND_COLOR))
@@ -53,6 +57,22 @@ class GameView:
         """Affichage du background"""
 
         self.window.blit(self.background, (0, 0))
+
+    def update_groups_birds(self) -> None:
+        """
+        Met à jour les groupes des oiseaux
+        :return: None
+        """
+        self.groups_birds_view = [GroupOfBirdsView.GroupOfBirdsView(self.window, g) for g in self.env.list_group_birds]
+
+    def display_groups_birds(self) -> None:
+        """
+        Affiche les groupes d'oiseaux
+        :return: None
+        """
+
+        for view in self.groups_birds_view:
+            view.display()
 
     def run(self):
         """Méthode principale de la classe. S'occupe de l'affichage de la partie"""
@@ -72,11 +92,15 @@ class GameView:
                 elif event.type == pygame.MOUSEBUTTONUP:
                     action = 1
 
-            self.env.plane.action(action)
+            self.env.step(action)
+
+            self.update_groups_birds()
 
             self.display_bg()
 
             self.cloudsview.display()
+
+            self.display_groups_birds()
 
             self.planeview.display()
 

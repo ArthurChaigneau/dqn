@@ -63,7 +63,20 @@ class GameView:
         Met à jour les groupes des oiseaux
         :return: None
         """
-        self.groups_birds_view = [GroupOfBirdsView.GroupOfBirdsView(self.window, g) for g in self.env.list_group_birds]
+
+        groups_onscreen = []
+
+        # On ne garde que les groupes à l'écran
+        for group_view in self.groups_birds_view:
+            if group_view.on_screen:
+                groups_onscreen.append(group_view)
+
+        # On ajoute éventuellement une nouvelle view pour les nouveaux groupes d'oiseaux
+        for group in self.env.list_group_birds:
+            if not any(group is g.group_birds for g in groups_onscreen):
+                groups_onscreen.append(GroupOfBirdsView.GroupOfBirdsView(self.window, group))
+
+        self.groups_birds_view = groups_onscreen
 
     def display_groups_birds(self) -> None:
         """

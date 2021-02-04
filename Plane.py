@@ -43,8 +43,7 @@ class Plane:
         else:
             self.speedy = min(self.MAX_SPEED_FALL, self.speedy + self.INC_SPEED_FALL)
 
-        if self.position[1][1] + self.speedy < 800:
-            self.position[0][1], self.position[1][1] = self.position[0][1] + self.speedy, self.position[1][1] + self.speedy
+        self.position[0][1], self.position[1][1] = self.position[0][1] + self.speedy, self.position[1][1] + self.speedy
 
     def action(self, choice: int) -> None:
         """

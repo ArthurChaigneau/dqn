@@ -21,6 +21,8 @@ class GroupOfBirdsView:
 
         self.birds_view = [BirdView.BirdView(self.window, bird) for bird in self.group_birds.birds]
 
+        self.on_screen = True
+
     def display(self) -> None:
         """
         Affiche l'avion sur la fenêtre pygame
@@ -29,6 +31,8 @@ class GroupOfBirdsView:
 
         for bird_view in self.birds_view:
             bird_view.display()
+
+        self.on_screen = self.group_birds.on_screen
 
 
 

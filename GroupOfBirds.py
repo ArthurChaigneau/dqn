@@ -18,27 +18,27 @@ class GroupOfBirds:
         self.env = env
         self.speed = speed
 
+        self.on_screen = True
+
         self.posYHole = choice(range(0, self.env.height - self.LENGTH_HOLE, self.LENGTH_HOLE))  # Choix du trou aléatoirement
 
-        allThePositionPossible = [i for i in range(0, self.env.height - self.HEIGHT_BIRD, self.HEIGHT_BIRD)]  # Liste contenant toutes les positions y disponibles pour les oiseaux
+        allThePositionPossible = [i for i in range(0, self.env.height, self.HEIGHT_BIRD)]  # Liste contenant toutes les positions y disponibles pour les oiseaux
 
         for i in allThePositionPossible:
             if not (self.posYHole < i < self.posYHole + self.LENGTH_HOLE):
                 self.birds.append(Bird(self.env, self.env.width + 85, i, self.speed))
 
-    def move(self) -> None:
+    def move(self) -> bool:
         """
         Fait avancer tous les oiseaux
-        :return: None
+        :return: Retourne vrai si les oiseaux sont toujours sur l'écran près avoir avancé, faux sinon
         """
-
-        birds_onscreen = []
 
         for bird in self.birds:
             bird.move()
 
-            if bird.position[0][0] > - self.WIDTH_BIRD:
-                birds_onscreen.append(bird)
+            if bird.position[0][0] <= - self.WIDTH_BIRD:
+                self.on_screen = False
 
-        self.birds = birds_onscreen
+        return self.on_screen
 

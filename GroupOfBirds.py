@@ -22,11 +22,16 @@ class GroupOfBirds:
 
         self.posYHole = choice(range(0, self.env.height - self.LENGTH_HOLE, self.LENGTH_HOLE))  # Choix du trou aléatoirement
 
-        allThePositionPossible = [i for i in range(0, self.env.height, self.HEIGHT_BIRD)]  # Liste contenant toutes les positions y disponibles pour les oiseaux
+        # Liste contenant toutes les positions y disponibles pour les oiseaux
+        allThePositionPossible = [i for i in range(self.posYHole - self.HEIGHT_BIRD, - self.HEIGHT_BIRD // 2, - self.HEIGHT_BIRD)] + \
+                                 [i for i in range(
+                                     self.posYHole + self.LENGTH_HOLE + 1, self.env.height, self.HEIGHT_BIRD)]
 
         for i in allThePositionPossible:
-            if not (self.posYHole < i < self.posYHole + self.LENGTH_HOLE):
-                self.birds.append(Bird(self.env, self.env.width + 85, i, self.speed))
+
+            if not (self.posYHole <= i <= self.posYHole + self.LENGTH_HOLE):
+                self.birds.append(Bird(self.env, self.env.width + self.WIDTH_BIRD, i, self.speed))
+            print()
 
     def move(self) -> bool:
         """

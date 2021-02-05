@@ -126,6 +126,63 @@ class Env:
 
         return collision
 
+    def create_observation(self) -> np.ndarray:
+        """
+        Créer l'état dans lequel se trouve le serpent
+        :return: Un np.array contenant les info : dist par rapport au mur, dist par rapport à nourriture, dist
+        par rapport à tail, bool si je suis sur moi-même
+        """
+        cur_observ = np.zeros((6, ), dtype=np.float)
+
+        # En haut à droite / En bas à droite
+        pos_plane_right = [(self.plane.position[0][0] + self.plane.WIDTH_SPRITE, self.plane.position[0][1]),
+                           self.plane.position[1]]
+
+        # Distance avec le haut de l'écran
+        cur_observ[0] = euclidean_distance(pos_plane_right[0], (pos_plane_right[0][0], 0))
+
+        # Distance avec le bas de l'écran
+        cur_observ[1] = euclidean_distance(pos_plane_right[1], (pos_plane_right[1][0], self.height))
+
+        # On trouve quel est le prochain groupe d'oiseaux (s'il y a un groupe d'oiseaux)
+        if len(self.list_group_birds):
+
+            idx_next_group = 0
+
+            while self.list_group_birds[idx_next_group].birds[0].position[1][0] < self.plane.position[0][0]:
+                idx_next_group += 1
+
+            # En haut à gauche / En bas à gauche
+            pos_next_hole = [(self.list_group_birds[idx_next_group].birds[0].position[0][0],
+                              self.list_group_birds[idx_next_group].posYHole),
+                             (self.list_group_birds[idx_next_group].birds[0].position[0][0],
+                              self.list_group_birds[idx_next_group].posYHole +
+                              self.list_group_birds[idx_next_group].LENGTH_HOLE)]
+
+            # Distance avec le coin gauche du haut du trou dans le prochain groupe d'oiseaux
+            cur_observ[2] = euclidean_distance(pos_plane_right[0], pos_next_hole[0])
+
+            # Distance avec le coin gauche du bas du trou dans le prochain groupe d'oiseaux
+            cur_observ[3] = euclidean_distance(pos_plane_right[1], pos_next_hole[1])
+
+            # Est-ce que l'avion est au dessus du trou
+            cur_observ[4] = int(pos_plane_right[0][1] < pos_next_hole[0][1])
+
+            # Est-ce que l'avion est en train de passer à travers le passage entre les oiseaux
+            xpos_end_hole = self.list_group_birds[idx_next_group].birds[0].position[1][0]
+            cur_observ[5] = int(pos_next_hole[0][0] <= pos_plane_right[0][0] <= xpos_end_hole or
+                                pos_next_hole[0][0] <= self.plane.position[0][0] <= xpos_end_hole)
+
+        else:
+
+            # Distance avec le bord droit de l'écran par défaut
+            cur_observ[2] = euclidean_distance(pos_plane_right[0], (self.width, pos_plane_right[0][1]))
+
+            # Distance avec le bord droit de l'écran par défaut
+            cur_observ[3] = euclidean_distance(pos_plane_right[1], (self.width, pos_plane_right[1][1]))
+
+        return cur_observ
+
     def step(self, action: int):
         """
         Effectue une action avec l'avion de chasse
@@ -133,12 +190,10 @@ class Env:
         :return: Un tuple avec : un nouvel état, une réc, si la partie est finie ou non
         """
 
-        # Pos avant de bouger
-        plane_old_pos = tuple(self.plane.position)
-
         # Action de l'avion
         self.episode_step += 1
         self.plane.action(action)
+        self.distance += 1
 
         # Spawn éventuel des oiseaux
         self.spawn_birds()
@@ -146,11 +201,24 @@ class Env:
         # Déplacement des oiseaux
         self.move_groups_birds()
 
+        # Nouvel état
+        new_obs = self.create_observation()
+
         # Récompenses / Pénalités
         if self.plane_out_of_screen():
             reward = - self.OUT_OF_SCREEN_PENALTY
         elif self.plane_collides_with_birds():
             reward = - self.COLLISION_WITH_BIRDS_PENALTY
-        else :
+        else:
             reward = - self.MOVE_PENALTY
-        
+
+        # état terminal ou non
+        done = False
+
+        if reward in (-self.OUT_OF_SCREEN_PENALTY, -self.COLLISION_WITH_BIRDS_PENALTY):
+            done = True
+
+        return new_obs, reward, done
+
+
+

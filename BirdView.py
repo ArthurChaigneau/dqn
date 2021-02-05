@@ -45,3 +45,8 @@ class BirdView:
 
         self.window.blit(image, (self.bird.position[0][0], self.bird.position[0][1]))
 
+        pygame.draw.circle(self.window, pygame.Color('#FF0000'), (int(self.bird.position[0][0]),
+                                                                  int(self.bird.position[0][1])), 4)
+        pygame.draw.circle(self.window, pygame.Color('#0000FF'), (int(self.bird.position[1][0]),
+                                                                  int(self.bird.position[1][1])), 4)
+

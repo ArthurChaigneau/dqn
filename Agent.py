@@ -76,14 +76,10 @@ class Agent:
 
         # On prédit les q values à partir des états actuels
         cur_states = np.array([row[0] for row in minibatch])
-        print("Shape train :", cur_states.shape)
-        print("Première ligne :", cur_states[0, :])
         cur_q_values_list = self.model.predict(cur_states)
 
         # On prédit les q values à partir des états futurs
         new_states = np.array([row[3] for row in minibatch])
-        print("Shape futur train :", cur_states.shape)
-        print("Première ligne futur :", cur_states[0, :])
         new_q_values_list = self.model.predict(new_states)
 
         X = []

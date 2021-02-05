@@ -22,6 +22,8 @@ class Env:
     ITER_SPAWN_BIRDS = 150
     SPEED_BIRDS = 1
     MARGIN_Y = 30
+    ACTION_SPACE_SIZE = 2
+    OBSERVATION_SIZE = 6
 
     # REWARD / PENALITIES
     OUT_OF_SCREEN_PENALTY = 300
@@ -55,6 +57,8 @@ class Env:
 
         # Nombre d'épisodes
         self.episode_step = 0
+
+        return self.create_observation()
 
     def spawn_birds(self) -> None:
         """
@@ -126,13 +130,13 @@ class Env:
 
         return collision
 
-    def create_observation(self) -> np.ndarray:
+    def create_observation(self) -> list:
         """
         Créer l'état dans lequel se trouve le serpent
         :return: Un np.array contenant les info : dist par rapport au mur, dist par rapport à nourriture, dist
         par rapport à tail, bool si je suis sur moi-même
         """
-        cur_observ = np.zeros((6, ), dtype=np.float)
+        cur_observ = [0 for _ in range(self.OBSERVATION_SIZE)]
 
         # En haut à droite / En bas à droite
         pos_plane_right = [(self.plane.position[0][0] + self.plane.WIDTH_SPRITE, self.plane.position[0][1]),

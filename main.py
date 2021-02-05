@@ -1,9 +1,12 @@
-import Plane
-import Env
-import GameView
+import App
 
-e = Env.Env(800, 1200)
+WIDTH = 1200
+HEIGHT = 800
+EPISODES = 10_000
+TRAINING = True
+SAVE_MODEL = True
+NAME_FILE = "test"
 
-g = GameView.GameView(800, 1200, e)
+app = App.App(EPISODES, HEIGHT, WIDTH, save_model=SAVE_MODEL, model_file_name=NAME_FILE)
 
-g.run()
+app.run(training=True)

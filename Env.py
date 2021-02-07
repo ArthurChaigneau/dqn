@@ -24,6 +24,7 @@ class Env:
     MARGIN_Y = 30
     ACTION_SPACE_SIZE = 2
     OBSERVATION_SIZE = 6
+    LIMIT_N_EMPISODES = 4000
 
     # REWARD / PENALITIES
     OUT_OF_SCREEN_PENALTY = 300
@@ -76,7 +77,11 @@ class Env:
         """
         groups_onscreen = []
 
+        i = 0
+
         for group in self.list_group_birds:
+            i += 1
+
             if group.move():
                 groups_onscreen.append(group)
 
@@ -109,16 +114,8 @@ class Env:
                     self.plane.position[1][0] or self.plane.position[0][0] < \
                     self.list_group_birds[idx_next_group].birds[0].position[0][0] < self.plane.position[1][0]:
 
-                # print("X OK ")
-
                 # On regarde si l'avion est en contact avec un des oiseaux de ce groupe
                 for bird in self.list_group_birds[idx_next_group].birds:
-
-                    # print("Bird left : ", bird.position[0][1])
-                    # print("Plane left : ", self.plane.position[0][1])
-                    # print("Plane right : ", self.plane.position[1][1])
-                    # print("Bird right : ", bird.position[1][1])
-                    # print()
 
                     if bird.position[0][1] + self.MARGIN_Y < self.plane.position[0][1] < \
                             bird.position[1][1] - self.MARGIN_Y or bird.position[0][1] + self.MARGIN_Y < \
@@ -219,7 +216,9 @@ class Env:
         # état terminal ou non
         done = False
 
-        if reward in (-self.OUT_OF_SCREEN_PENALTY, -self.COLLISION_WITH_BIRDS_PENALTY):
+        if reward in (-self.OUT_OF_SCREEN_PENALTY, -self.COLLISION_WITH_BIRDS_PENALTY) or \
+                self.episode_step > self.LIMIT_N_EMPISODES:
+
             done = True
 
         return new_obs, reward, done

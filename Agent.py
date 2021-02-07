@@ -6,6 +6,7 @@ import Env
 from collections import deque
 import random
 import numpy as np
+from CustNeuralNetwork import CustNeuralNetwork
 
 
 class Agent:
@@ -19,7 +20,7 @@ class Agent:
     UPDATE_TARGET_EVERY = 5
     DISCOUNT = 0.99
 
-    def __init__(self, env: Env.Env, load_model=False, model_file_name=""):
+    def __init__(self, env: Env.Env, load_model_training=False, load_model_pred=False, model_file_name=""):
         """
         Init de la classe
         """
@@ -27,9 +28,14 @@ class Agent:
         # Env dans lequel l'avion évolue
         self.env = env
 
+        # Mode d'entrainement
+        self.training_mode = not load_model_pred
+
         # Model principal utilisé pour fit et predict
-        if load_model:
+        if load_model_training:
             self.model = self.load_model(model_file_name)
+        elif load_model_pred:
+            self.model = CustNeuralNetwork(model_file_name)
         else:
             self.model = self.create_model()
             self.model.build(input_shape=(None, self.env.OBSERVATION_SIZE))
@@ -68,7 +74,7 @@ class Agent:
         :return: None
         """
 
-        if len(self.training_q) < self.MIN_BATCH_SIZE_TRAINING:
+        if len(self.training_q) < self.MIN_BATCH_SIZE_TRAINING or not self.training_mode:
             return None
 
         # On prend MINI_BATCH_SIZE (64) éléments sur lesuels train
@@ -123,7 +129,7 @@ class Agent:
         :return: None
         """
 
-        self.model.save('model/' + file_name + 'h5', save_format='h5')
+        self.model.save('model/' + file_name + '.h5', save_format='h5')
 
     def load_model(self, file_name: str) -> tf.keras.Model:
         """

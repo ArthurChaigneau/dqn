@@ -1,5 +1,5 @@
 import pygame
-import Env
+import Game
 import PlaneView
 import CloudsView
 import GroupOfBirdsView
@@ -12,7 +12,7 @@ class GameView:
 
     BACKGROUND_COLOR = '#0080FF'
 
-    def __init__(self, height: int, width: int, env: Env.Env):
+    def __init__(self, height: int, width: int, game: Game.Game):
         """
         Init de la classe
         :param width: Largeur
@@ -26,8 +26,11 @@ class GameView:
         # Hauteur de la fenêtre
         self.height = height
 
+        # Classe s'occupant de jouer
+        self.game = game
+
         # Environnement de la partie
-        self.env = env
+        self.env = game.env
 
         pygame.init()
         pygame.font.init()
@@ -78,6 +81,16 @@ class GameView:
 
         self.groups_birds_view = groups_onscreen
 
+    def reset_game(self) -> None:
+        """
+        Réinitialise les objets en rapport avec l'affichage du jeu
+        :return: None
+        """
+
+        self.planeview = PlaneView.PlaneView(self.window, self.env.plane)
+
+        self.groups_birds_view = [GroupOfBirdsView.GroupOfBirdsView(self.window, g) for g in self.env.list_group_birds]
+
     def display_groups_birds(self) -> None:
         """
         Affiche les groupes d'oiseaux
@@ -92,20 +105,19 @@ class GameView:
 
         clock = pygame.time.Clock()
 
-        action = 1
-
         while self.running:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    action = 0
-                elif event.type == pygame.MOUSEBUTTONUP:
-                    action = 1
+            self.game.graphic_test()
 
-            self.env.step(action)
+            if self.game.restarted:
+
+                self.reset_game()
+
+                self.game.restarted = False
 
             self.update_groups_birds()
 

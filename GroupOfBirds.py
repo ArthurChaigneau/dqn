@@ -31,7 +31,6 @@ class GroupOfBirds:
 
             if not (self.posYHole <= i <= self.posYHole + self.LENGTH_HOLE):
                 self.birds.append(Bird(self.env, self.env.width + self.WIDTH_BIRD, i, self.speed))
-            print()
 
     def move(self) -> bool:
         """

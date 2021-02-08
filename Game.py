@@ -103,10 +103,10 @@ class Game:
         if self.save_model:
             self.agent.save_model(self.model_file_name)
 
-    def graphic_test(self) -> None:
+    def graphic_test(self) -> list:
         """
         Méthode à utiliser si on affiche les graphiques lors de la partie
-        :return: None
+        :return: La liste des valeurs utilisées dans le réseau de neurones de l'agent
         """
 
         self.cur_ep = 0
@@ -120,9 +120,13 @@ class Game:
 
             self.done = False
 
-        action = int(np.argmax(self.agent.get_q_values(np.array(self.cur_state))))
+        res_forward_prop = self.agent.model.forward_propagation(np.array(self.cur_state))
+
+        action = int(np.argmax(res_forward_prop[-1]))
 
         self.cur_state, _, self.done = self.env.step(action)
+
+        return [r.tolist() for r in res_forward_prop]
 
 
 

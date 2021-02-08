@@ -3,6 +3,7 @@ import Game
 import PlaneView
 import CloudsView
 import GroupOfBirdsView
+import NeuralNetworkView
 
 
 class GameView:
@@ -48,6 +49,10 @@ class GameView:
 
         # Graphismes des oiseaux
         self.groups_birds_view = [GroupOfBirdsView.GroupOfBirdsView(self.window, g) for g in self.env.list_group_birds]
+
+        # Graphismes du réseau de neurones
+        self.neural_network_view = NeuralNetworkView.NeuralNetworkView(self.window, (self.width // 2, self.height // 2),
+                                                                       [6, 4, 2])
 
         # Background de la fenêtre
         self.background = pygame.Surface((self.width, self.height))
@@ -111,7 +116,7 @@ class GameView:
                 if event.type == pygame.QUIT:
                     self.running = False
 
-            self.game.graphic_test()
+            res_forward_prop = self.game.graphic_test()
 
             if self.game.restarted:
 
@@ -132,6 +137,10 @@ class GameView:
             self.cloudsview.create_cloud()
 
             self.cloudsview.update()
+
+            self.neural_network_view.update_layers(res_forward_prop)
+
+            self.neural_network_view.display()
 
             pygame.display.update()
             clock.tick(60)

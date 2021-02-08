@@ -51,8 +51,9 @@ class GameView:
         self.groups_birds_view = [GroupOfBirdsView.GroupOfBirdsView(self.window, g) for g in self.env.list_group_birds]
 
         # Graphismes du réseau de neurones
-        self.neural_network_view = NeuralNetworkView.NeuralNetworkView(self.window, (self.width // 2, self.height // 2),
-                                                                       [6, 4, 2])
+        self.neural_network_view = NeuralNetworkView.NeuralNetworkView(self.window, (int(3 * self.width / 4),
+                                                                                     int(3 * self.height / 4)),
+                                                                       self.game.agent.model.get_dims())
 
         # Background de la fenêtre
         self.background = pygame.Surface((self.width, self.height))

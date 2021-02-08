@@ -34,12 +34,4 @@ class GroupOfBirdsView:
 
         self.on_screen = self.group_birds.on_screen
 
-        pygame.draw.circle(self.window, pygame.Color('#00FF00'), (int(self.group_birds.birds[0].position[0][0]),
-                                                                  int(self.group_birds.posYHole)), 4)
-
-        pygame.draw.circle(self.window, pygame.Color('#00FF00'), (int(self.group_birds.birds[0].position[0][0]),
-                                                                  int(self.group_birds.posYHole +
-                                                                      self.group_birds.LENGTH_HOLE)), 4)
-
-
 

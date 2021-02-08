@@ -77,6 +77,14 @@ class CustNeuralNetwork:
 
         return parameters
 
+    def get_dims(self) -> list:
+        """
+        Récupère les dimensions de réseau de neurones
+        :return: Une liste avec les dimensions de chaque couche
+        """
+
+        return [self.parameters[key].shape[0] for key in self.parameters if len(self.parameters[key].shape) == 1]
+
     def linear_forward(self, A: np.ndarray, W: np.ndarray, b: np.ndarray) -> np.ndarray:
         """
         Implémente la partie linéaire du la propagation avant
